@@ -20,8 +20,8 @@ singularity pull docker://suzannejin/mod_quantest2:latest
 ```
 quantest2 <alignment file> <ss file>
 ```
-The alignment file will be in FASTA format.
-The ss file should include the selected 3 reference sequences per family.
+The alignment file should be in FASTA format.
+The ss file should include the chosen 3 reference sequences per family.
 You can retrieve the most informative reference sequences by doing:
 t_coffee -other_pg seq_reformat -in <ref msa> -action +trim
 _aln_n3 -output fasta_seq
