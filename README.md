@@ -8,7 +8,7 @@ This repository is created to store the Dockerfile and the modified scripts.
 The SOURCES are listed below in the REFERENCE section.
 
 
-# Docker
+# Docker | Singularity
 The docker image is accessible from *suzannejin/mod_quantest2*
 
 You can also use it with singularity:
