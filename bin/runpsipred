@@ -1,0 +1,55 @@
+#!/bin/tcsh
+
+# This is a simple script which will carry out all of the basic steps
+# required to make a PSIPRED prediction. Note that it assumes that the
+# following programs are in the appropriate directories:
+# psipred - PSIPRED V4 program
+# psipass2 - PSIPRED V4 program
+#
+# Usage: tcsh runpsipred <MTX file>
+
+# NOTE: Script modified to be more cluster friendly (DTJ April 2008)
+# and modified to directly use MTX file generated from MSA (SJ March 2020)
+
+# Where the PSIPRED V4 programs have been installed
+set execdir = /usr/src/app/psipred/bin
+
+# Where the PSIPRED V4 data files have been installed
+set datadir = /usr/src/app/psipred/data
+
+set basename = $1:r
+set rootname = $basename:t
+
+set mtx = $1
+
+
+
+
+
+echo "Predicting secondary structure..."
+
+echo Pass1 ...
+
+$execdir/psipred $mtx $datadir/weights.dat $datadir/weights.dat2 $datadir/weights.dat3 > $rootname.ss
+
+if ($status != 0) then
+    echo "FATAL: Error whilst running psipred - script terminated!"
+    exit $status
+endif
+
+echo Pass2 ...
+
+$execdir/psipass2 $datadir/weights_p2.dat 1 1.0 1.0 $rootname.ss2 $rootname.ss > $rootname.horiz
+
+if ($status != 0) then
+    echo "FATAL: Error whilst running psipass2 - script terminated!"
+    exit $status
+endif
+
+# Remove temporary files
+
+echo Cleaning up ...
+#\rm -f $tmproot.* error.log
+
+echo "Final output files:" $rootname.ss2 $rootname.horiz
+echo "Finished."
