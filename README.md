@@ -10,8 +10,11 @@ The SOURCES are listed below in the REFERENCE section.
 
 # Docker
 The docker image is accessible from suzannejin/mod_quantest2
+
 You can also use it with singularity:
+```
 singularity pull docker://suzannejin/mod_quantest2:latest
+```
 
 # Usage
 ```
