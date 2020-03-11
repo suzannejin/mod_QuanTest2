@@ -5,7 +5,7 @@ NOTE: the quantest2.py script is modified to be able to use the standalone versi
 
 This repository is created to store the Dockerfile and the modified scripts.
 
-The SOURCES are listed below in the REFERENCE section.
+The original SOURCES are listed below in the REFERENCE section.
 
 
 # Docker | Singularity
