@@ -36,11 +36,6 @@ myBasename=sys.argv[0].rsplit('/',1)[0]
 if VERBOSE:
     print("myBasename = {}".format(myBasename))
 
-LOGFILE = "quantest2.log"
-try:
-    logFile = open(LOGFILE,"w")
-except:
-    print("OutputError: Could not open file {} for writing".format(LOGFILE))
 
 
     
@@ -300,6 +295,13 @@ def main():
         aux = alignment[0:alignment.rfind(".")]
         family = aux[aux.rfind("/")+1:]
         ylimaf = family.replace('-','_').replace('.','_')
+
+        LOGFILE = family + ".quantest2_log"
+        try:
+            logFile = open(LOGFILE,"w")
+        except:
+            print("OutputError: Could not open file {} for writing".format(LOGFILE))
+
         try:
             alnFilePtr = open(alignment,"r")
         except FileNotFoundError:
