@@ -1,6 +1,7 @@
 FROM ubuntu:16.04
 LABEL maintainer="Suzanne Jin <suzanne.jin@crg.es>"
 
+ARG CACHEBUST=1
 
 ## Basic tools
 RUN apt-get update && \
