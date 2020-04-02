@@ -32,7 +32,7 @@ WORKDIR /usr/src/app
 
 # Install PSIPRED
 RUN git clone https://github.com/psipred/psipred.git && \
-    checkout 5a5a6157c9011d30f43d33ffa41018c94025805c && \
+    git checkout 5a5a6157c9011d30f43d33ffa41018c94025805c && \
     cd psipred && \
     cd src && \
     make && \
@@ -47,19 +47,35 @@ RUN wget https://zhanglab.ccmb.med.umich.edu/DeepMSA/package.zip && \
     cat a > lib/hh/scripts/HHPaths.pm && \
     rm a
 
-# Install QuantTest2 (original version)
+# Get QuantTest2 (original version)
 # RUN wget http://bioinf.ucd.ie/quantest2.tar && \
 #     tar -xvf quantest2.tar && \
 #     rm quantest2.tar 
 
-# Add modified scripts
+# Get QuanTest2 (modified version)
 RUN git clone https://github.com/suzannejin/mod_QuanTest2.git && \ 
     mv /usr/src/app/mod_QuanTest2/bin/runpsipred /usr/src/app/psipred/. && \
     cp /usr/src/app/mod_QuanTest2/bin/quantest2Local.py /usr/src/app/quantest2.py && \
     cp /usr/src/app/mod_QuanTest2/bin/quantest2Local.py /bin/quantest2 && \
     rm -rf mod_QuanTest2 
 
+# Install TCOFFEE
+RUN git clone https://github.com/cbcrg/tcoffee.git tcoffee && \
+    cd tcoffee && \
+    git checkout 83095e9d430e83424ccf7f50af82e16c2c3b49d4 && \
+    cd t_coffee/src && \
+    make t_coffee && \
+    cp t_coffee /bin/.
+
+
 
 ENV HHLIB=/usr/src/app/hhsuite2
 
-ENTRYPOINT ["quantest2"]
+ENV CACHE_4_TCOFFEE ${TMPDIR:-/tmp}/.tcoffee/cache
+ENV LOCKDIR_4_TCOFFEE ${TMPDIR:-/tmp}/.tcoffee/lock
+ENV TMP_4_TCOFFEE ${TMPDIR:-/tmp}/.tcoffee/tmp
+ENV HOME_4_TCOFFEE ~/.tcoffee/
+ENV HOME /
+
+
+#ENTRYPOINT ["quantest2"]
