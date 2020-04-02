@@ -122,8 +122,6 @@ if __name__ == '__main__':
     import argparse
     import os
     import sys
-    from get_seqs import get_seqs
-    from readFilesFunctions import read_fasta, read_aux
    
 
     app = argparse.ArgumentParser(description=__description__)
