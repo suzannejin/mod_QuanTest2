@@ -49,23 +49,6 @@ def read_aux(filename):
     return(l)
 
 
-def get_seqs(fasta,names):
-    ''' Given a FASTA file, get the specified sequences.
-
-    A ordered dictionary {name : sequence} with the specified sequences is returned.
-    '''
-
-    import collections
-
-    d=collections.OrderedDict()
-
-    for name in names:
-        seq=fasta[name]
-        d[name]=seq
-        
-    return(d)
-
-
 def get_informative_names(fastaname,tree,n):
     ''' Get the name of the informative n sequences from a fasta file <msa or seq>, based on the guide tree <tree> 
     
