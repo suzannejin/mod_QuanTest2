@@ -171,7 +171,7 @@ def Gblocks(family, ri, refLabel, refSeq, REFPOS, cnt, seq):
     except:
         print("Could not open file {} for writing (permission?)".format(blockfile))
         quit()
-            
+    
     # print sequence that should be predicted
     if VVERBOSE:
         print("ref {}: {}, position {}, write to {}".format(ri,refLabel[ri],REFPOS[ri],blockfile))

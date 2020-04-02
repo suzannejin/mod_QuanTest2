@@ -32,6 +32,7 @@ WORKDIR /usr/src/app
 
 # Install PSIPRED
 RUN git clone https://github.com/psipred/psipred.git && \
+    checkout 5a5a6157c9011d30f43d33ffa41018c94025805c && \
     cd psipred && \
     cd src && \
     make && \

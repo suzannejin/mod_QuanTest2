@@ -1,5 +1,6 @@
 # Modified QuanTest2
 
+bin/get_refANDinformative_seqs.py       Retrieve N sequences (reference + (N-ref) informative sequences) from an given fasta file <seq or msa>. 
 bin/quantest2Local.py       Modified QuanTest2's python script. Source paper: https://doi.org/10.1093/bioinformatics/btz552
 bin/runpsipred              Modified PSIPRED script. Source: https://github.com/psipred/psipred
 
