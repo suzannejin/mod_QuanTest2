@@ -34,7 +34,6 @@ WORKDIR /usr/src/app
 RUN git clone https://github.com/psipred/psipred.git && \
     cd psipred && \
     git checkout 5a5a6157c9011d30f43d33ffa41018c94025805c && \
-    cd psipred && \
     cd src && \
     make && \
     make install 
