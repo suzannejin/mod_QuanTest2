@@ -36,7 +36,8 @@ params.tree_dir = "/users/cn/sjin/projects/homoplasy/trees"   // *.dnd
 params.msa_dir = "/users/cn/sjin/projects/homoplasy/nf_homoplasty/"   // subfolder 'results_fullTree_ + .... '
 
 // output directory
-params.output = "/users/cn/sjin/projects/homoplasy/test2"
+//params.output = "/users/cn/sjin/projects/homoplasy/test"
+params.output = "/users/cn/sjin/projects/homoplasy/results_quantest2/quantest2_with_informativeAln_mafftdnd"
 
 //
 
@@ -126,7 +127,7 @@ ids
 
 process nf_quantest2 {
 
-    //cache false 
+    cache false 
 
     tag "${id}.informative${n_quantest2}.with.${regtrim_tree}.tree"
     publishDir "${params.output}/n${n_quantest2}/${fam}", mode: 'copy', overwrite: true
@@ -151,7 +152,7 @@ process nf_quantest2 {
           file("${id}.informative${n_quantest2}.with.${regtrim_tree}.tree*") \
           into predictions
 
-    shell:
+    script:
       """
       python3 $baseDir/bin/get_refANDinformative_seqs.py \
       --msa ${msa} --seq ${seqs} --names ${refnames} --tree ${tree} --n ${n_quantest2} \
