@@ -90,6 +90,7 @@ def merge_ref_informative_seqs(msa,ref_names,inf_names,n):
             break
         if name in ref_names:
             continue
+        seq=msa[name]
         d[name]=seq
         n+=1
     

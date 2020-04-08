@@ -1,9 +1,16 @@
-# Modified QuanTest2
+Modified QuanTest2
 
+
+# Nextflow
+quantest2.nf                Nextflow pipeline to retrieve N informative sequences + run QuanTest2
+nextflow.config             Nextflow configuration file
+
+# Scripts
 bin/get_refANDinformative_seqs.py       Retrieve N sequences (reference + (N-ref) informative sequences) from an given fasta file <seq or msa>. 
 bin/quantest2Local.py       Modified QuanTest2's python script. Source paper: https://doi.org/10.1093/bioinformatics/btz552
 bin/runpsipred              Modified PSIPRED script. Source: https://github.com/psipred/psipred
 
-docker/Dockerfile           Dockerfile. It will create a container with DeepMSA (includes the a3m2mtx.pl script and other binary files), PSIPRED (secondary structure prediction) and QuanTest2.
+# Docker
+docker/Dockerfile           Dockerfile. It will create a container with DeepMSA (includes the a3m2mtx.pl script and other binary files), PSIPRED (secondary structure prediction), QuanTest2 and T-coffee.
 
 

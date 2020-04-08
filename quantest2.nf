@@ -16,7 +16,6 @@ params.n_quantest2 = [1000,500,300,250,200,150,100,90,80,70,60,50,40,30]  // Siz
 // which families to use
 //params.fams = [ "sdr", "Acetyltransf" ]
 //params.fams = ["sdr","aadh"]
-//params.fams=[ "ltn", "aadh" ]
 params.fams = ["sdr","Acetyltransf","rrm","aat","adh","p450","rhv","blmb","PDZ","Rhodanese","hla","aldosered","ghf13","hom","biotin_lipoyl","tRNA-synt_2b","myb_DNA-binding","gluts","blm","egf","gpdh","lyase_1","int","subt","ldh","HLH","LIM","cyclo","proteasome","icd","msb","OTCace","HMG_box","flav","uce","peroxidase","sodfe","ghf1","cys","ace","glob","tim","hr","hormone_rec","hpr","oxidored_q6","asp","cytb","serpin","annexin","aadh","phc","ghf5","Ald_Xan_dh_2","mofe","Sulfotransfer","kunitz","GEL","tms","DMRL_synthase","KAS","sodcu","tgfb","ghf10","rub","mmp","cah","DEATH","cryst","kringle","az","il8","ltn"]
 
 //
@@ -126,6 +125,8 @@ ids
 
 
 process nf_quantest2 {
+
+    //cache false 
 
     tag "${id}.informative${n_quantest2}.with.${regtrim_tree}.tree"
     publishDir "${params.output}/n${n_quantest2}/${fam}", mode: 'copy', overwrite: true

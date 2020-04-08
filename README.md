@@ -3,7 +3,7 @@
 A containerized version of QuanTest2.
 NOTE: the _quantest2.py_ script is modified to be able to use the standalone version of PSIPRED to predict the secondary structures.
 
-This repository is created to store the Dockerfile and the modified scripts.
+This repository is created to store the Dockerfile and the modified scripts. A Nextflow pipeline is also included.
 
 The original SOURCES are listed below in the REFERENCE section.
 
@@ -16,14 +16,6 @@ You can also use it with singularity:
 singularity pull docker://suzannejin/mod_quantest2:latest
 ```
 
-
-In order to run the helper script _get_refANDinformative_seqs.py_, you should install T-coffee first. You can find its docker image in *suzannejin/tcoffee* or use it with singularity:
-```
-singularity pull docker://suzannejin/tcoffee:latest
-```
-and save it as _'t_coffee'_ in a directory in your $PATH.
-
-
 # Usage
 ```
 quantest2 <alignment file> <ss file>
@@ -32,11 +24,18 @@ The alignment file should be in FASTA format.
 
 The ss file should include the chosen 3 reference sequences per family.
 You can retrieve the most informative reference sequences by doing:
+```
 t_coffee -other_pg seq_reformat -in <ref msa> -action +trim
 _aln_n3 -output fasta_seq
+```
 
 You can also use the _get_refANDinformative_seqs.py_ script to retrieve N informative sequences from the alignment.
 
+# Nextflow pipeline
+The configuration file and the upper part of the pipeline (set input) should be modified before being used, and then run:
+```
+nextflow run quantest.nf
+```
 
 # Reference
 
@@ -57,6 +56,7 @@ Jones, D. T. Protein secondary structure prediction based on position-specific s
 __T-coffee:__
 
 Notredame, C., Higgins, D. G. & Heringa, J. T-coffee: a novel method for fast and accurate multiple sequence alignment 1 1Edited by J. Thornton. J. Mol. Biol. 302, 205–217 (2000).
+
 
 [...]
 
