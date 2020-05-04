@@ -3,20 +3,24 @@
 
 
 // which alignment methods to run
-params.bucket = [100,1000]
-params.aligner = ["CLUSTALO":"CO", "MAFFT-FFTNS1":"FFTNS1"] //CLUSTALO,MAFFT-FFTNS1,MAFFT-SPARSECORE,UPP,MAFFT-GINSI"
-params.tree = ["codnd","FAMSA","mafftdnd","dpparttreednd1","fastaparttreednd","fftns1dnd","parttreednd0","parttreednd2","CLUSTALO-RANDOM"]
-//params.tree = ["codnd","FAMSA"]
+params.bucket = [50,100,200,500,1000]
+//params.aligner = ["CLUSTALO":"CO", "MAFFT-FFTNS1":"FFTNS1"] //CLUSTALO,MAFFT-FFTNS1,MAFFT-SPARSECORE,UPP,MAFFT-GINSI"
+params.aligner = ["CLUSTALO":"CO", "MAFFT-FFTNS1":"FFTNS1", "MAFFT-SPARSECORE":"SPARSE", "MAFFT-GINSI":"GINSI"]
+params.tree = ["codnd","FAMSA","mafftdnd","dpparttreednd0","fastaparttreednd","fftns1dnd","parttreednd0","parttreednd2","CLUSTALO-RANDOM"]
+//params.tree = ["mafftdnd"]
 
 // which guide tree to retrieve informative sequences 
 params.regtrim_tree = "mafftdnd"
-params.n_quantest2 = [1000,500,300,250,200,150,100,90,80,70,60,50,40,30]  // Size of the partial alignment given to QuanTest2
-//params.n_quantest2 = [100, 1000]
+//params.n_quantest2 = [1000,500,300,250,200,150,100,90,80,70,60,50,40,30]  // Size of the partial alignment given to QuanTest2
+//params.n_quantest2 = [95,85,75,65,55,45,35,25,20,15,10]
+params.n_quantest2 = [1000]
 
 // which families to use
 //params.fams = [ "sdr", "Acetyltransf" ]
-//params.fams = ["sdr","aadh"]
-params.fams = ["sdr","Acetyltransf","rrm","aat","adh","p450","rhv","blmb","PDZ","Rhodanese","hla","aldosered","ghf13","hom","biotin_lipoyl","tRNA-synt_2b","myb_DNA-binding","gluts","blm","egf","gpdh","lyase_1","int","subt","ldh","HLH","LIM","cyclo","proteasome","icd","msb","OTCace","HMG_box","flav","uce","peroxidase","sodfe","ghf1","cys","ace","glob","tim","hr","hormone_rec","hpr","oxidored_q6","asp","cytb","serpin","annexin","aadh","phc","ghf5","Ald_Xan_dh_2","mofe","Sulfotransfer","kunitz","GEL","tms","DMRL_synthase","KAS","sodcu","tgfb","ghf10","rub","mmp","cah","DEATH","cryst","kringle","az","il8","ltn"]
+//params.fams = ["sdr","seatoxin"]
+//params.fams = ["sdr","Acetyltransf","rrm","aat","adh","p450","rhv","blmb","PDZ","Rhodanese","hla","aldosered","ghf13","hom","biotin_lipoyl","tRNA-synt_2b","myb_DNA-binding","gluts","blm","egf","gpdh","lyase_1","int","subt","ldh","HLH","LIM","cyclo","proteasome","icd","msb","OTCace","HMG_box","flav","uce","peroxidase","sodfe","ghf1","cys","ace","glob","tim","hr","hormone_rec","hpr","oxidored_q6","asp","cytb","serpin","annexin","aadh","phc","ghf5","Ald_Xan_dh_2","mofe","Sulfotransfer","kunitz","GEL","tms","DMRL_synthase","KAS","sodcu","tgfb","ghf10","rub","mmp","cah","DEATH","cryst","kringle","az","il8","ltn"]
+params.fams = ["rvp","zf-CCHH","sdr","Acetyltransf","rrm","aat","adh","p450","rhv","blmb","PDZ","Rhodanese","hla","aldosered","ghf13","hom","biotin_lipoyl","tRNA-synt_2b","myb_DNA-binding","gluts","blm","egf","gpdh","lyase_1","int","subt","ldh","HLH","LIM","cyclo","proteasome","icd","msb","OTCace","HMG_box","flav","uce","peroxidase","sodfe","ghf1","cys","ace","glob","tim","hr","hormone_rec","hpr","oxidored_q6","asp","cytb","serpin","annexin","aadh","phc","ghf5","Ald_Xan_dh_2","mofe","Sulfotransfer","kunitz","GEL","tms","DMRL_synthase","KAS","sodcu","tgfb","ghf10","rub","mmp","cah","DEATH","cryst","kringle","az","il8","ltn","phoslip","slectin","trfl","ins","ChtBD","ghf22","ricin","profilin","Stap_Strp_toxin","sti","TNF","ghf11","toxin","bowman","rnasemam","cyt3","scorptoxin","hip","seatoxin"]
+
 
 //
 
@@ -37,7 +41,7 @@ params.msa_dir = "/users/cn/sjin/projects/homoplasy/nf_homoplasty/"   // subfold
 
 // output directory
 //params.output = "/users/cn/sjin/projects/homoplasy/test"
-params.output = "/users/cn/sjin/projects/homoplasy/results_quantest2/quantest2_with_informativeAln_mafftdnd"
+params.output = "/users/cn/sjin/projects/homoplasy/results_quantest2/quantest2_with_informativeAln_${params.regtrim_tree}"
 
 //
 
@@ -76,7 +80,10 @@ for ( fam in params.fams )
           n=params.ref_dir + "/" + fam + ".aux"
           t=params.tree_dir + "/" + fam + "." + params.regtrim_tree + ".dnd"
           ss=params.ss_dir + "/" + fam + ".ss"
-          msas_l.add(msa); seqs_l.add(s); names_l.add(n); trees_l.add(t); ss_l.add(ss)
+          File file = new File(msa)
+          if (file.exists()){
+            msas_l.add(msa); seqs_l.add(s); names_l.add(n); trees_l.add(t); ss_l.add(ss)
+          }
         }
     }
   }
@@ -151,6 +158,9 @@ process nf_quantest2 {
           val(regtrim_tree), \
           file("${id}.informative${n_quantest2}.with.${regtrim_tree}.tree*") \
           into predictions
+
+    when:
+      if(new File("${params.output}/n${n_quantest2}/${fam}/${id}.informative${n_quantest2}.with.${regtrim_tree}.tree.quantest2").exists()){false}else{true}
 
     script:
       """
