@@ -1,180 +1,137 @@
-#!/usr/bin/env nextflow
+
+// Dir
+params.maindir = "/users/cn/sjin/projects/homoplasy/slaveTree_results"  // Where input & output
+
+// Input alignments
+params.msa = "${params.maindir}/results_*_MAFFT-GINSI/alignments/*.aln"
+
+// Input fasta sequences
+params.seqs = "/users/cn/egarriga/datasets/homfam/combinedSeqs/*.fa"
+
+// Input references: aux & ss
+params.ref_aux = "/users/cn/sjin/projects/homoplasy/ss/informative3/*.aux"
+params.ref_ss = "/users/cn/sjin/projects/homoplasy/ss/informative3/*.ss"
+
+// // Alignment bucket & method
+// params.bucket = "50,100,200,500,1000"
+// params.aligner = "CLUSTALO"   // MAFFT-FFTNS1,MAFFT-SPARSECORE,MAFFT-GINSI
+
+// which guide tree to retrieve N informative sequences 
+params.regtrim_tree = "/users/cn/sjin/projects/homoplasy/trees/*.mafftdnd.dnd"
+params.n_quantest2 = "1000"
 
 
-
-// which alignment methods to run
-params.bucket = [50,100,200,500,1000]
-//params.aligner = ["CLUSTALO":"CO", "MAFFT-FFTNS1":"FFTNS1"] //CLUSTALO,MAFFT-FFTNS1,MAFFT-SPARSECORE,UPP,MAFFT-GINSI"
-params.aligner = ["CLUSTALO":"CO", "MAFFT-FFTNS1":"FFTNS1", "MAFFT-SPARSECORE":"SPARSE", "MAFFT-GINSI":"GINSI"]
-params.tree = ["codnd","FAMSA","mafftdnd","dpparttreednd0","fastaparttreednd","fftns1dnd","parttreednd0","parttreednd2","CLUSTALO-RANDOM"]
-//params.tree = ["mafftdnd"]
-
-// which guide tree to retrieve informative sequences 
-params.regtrim_tree = "mafftdnd"
-//params.n_quantest2 = [1000,500,300,250,200,150,100,90,80,70,60,50,40,30]  // Size of the partial alignment given to QuanTest2
-//params.n_quantest2 = [95,85,75,65,55,45,35,25,20,15,10]
-params.n_quantest2 = [1000]
-
-// which families to use
-//params.fams = [ "sdr", "Acetyltransf" ]
-//params.fams = ["sdr","seatoxin"]
-//params.fams = ["sdr","Acetyltransf","rrm","aat","adh","p450","rhv","blmb","PDZ","Rhodanese","hla","aldosered","ghf13","hom","biotin_lipoyl","tRNA-synt_2b","myb_DNA-binding","gluts","blm","egf","gpdh","lyase_1","int","subt","ldh","HLH","LIM","cyclo","proteasome","icd","msb","OTCace","HMG_box","flav","uce","peroxidase","sodfe","ghf1","cys","ace","glob","tim","hr","hormone_rec","hpr","oxidored_q6","asp","cytb","serpin","annexin","aadh","phc","ghf5","Ald_Xan_dh_2","mofe","Sulfotransfer","kunitz","GEL","tms","DMRL_synthase","KAS","sodcu","tgfb","ghf10","rub","mmp","cah","DEATH","cryst","kringle","az","il8","ltn"]
-params.fams = ["rvp","zf-CCHH","sdr","Acetyltransf","rrm","aat","adh","p450","rhv","blmb","PDZ","Rhodanese","hla","aldosered","ghf13","hom","biotin_lipoyl","tRNA-synt_2b","myb_DNA-binding","gluts","blm","egf","gpdh","lyase_1","int","subt","ldh","HLH","LIM","cyclo","proteasome","icd","msb","OTCace","HMG_box","flav","uce","peroxidase","sodfe","ghf1","cys","ace","glob","tim","hr","hormone_rec","hpr","oxidored_q6","asp","cytb","serpin","annexin","aadh","phc","ghf5","Ald_Xan_dh_2","mofe","Sulfotransfer","kunitz","GEL","tms","DMRL_synthase","KAS","sodcu","tgfb","ghf10","rub","mmp","cah","DEATH","cryst","kringle","az","il8","ltn","phoslip","slectin","trfl","ins","ChtBD","ghf22","ricin","profilin","Stap_Strp_toxin","sti","TNF","ghf11","toxin","bowman","rnasemam","cyt3","scorptoxin","hip","seatoxin"]
-
-
-//
-
-// input sequence directory
-params.seq_dir = "/users/cn/egarriga/datasets/homfam/combinedSeqs"  // *.fa
-
-// input reference sequences (3 per dataset) directory
-params.ref_dir = "/users/cn/sjin/projects/homoplasy/ss/informative3"  // *.aux
-
-// input reference secondary structure (3 per dataset) directory
-params.ss_dir = "/users/cn/sjin/projects/homoplasy/ss/informative3"  // *.ss
-
-// input guide tree (for T-coffee +regtrim) directory
-params.tree_dir = "/users/cn/sjin/projects/homoplasy/trees"   // *.dnd
-
-// input msa directory
-params.msa_dir = "/users/cn/sjin/projects/homoplasy/nf_homoplasty/"   // subfolder 'results_fullTree_ + .... '
-
-// output directory
-//params.output = "/users/cn/sjin/projects/homoplasy/test"
-params.output = "/users/cn/sjin/projects/homoplasy/results_quantest2/quantest2_with_informativeAln_${params.regtrim_tree}"
-
-//
+// ----------------
+// Print input info
+// ----------------
 
 log.info """\
          Running QuanTest2 - modified version"
          ======================================="
-         Dataset                                            : ${params.fams}
-         Alignment generated with:
-            Bucket size                                     : ${params.bucket}
-            Aligner                                         : ${params.aligner}
-            Guide tree                                      : ${params.tree}
+         Main directory                                     : ${params.maindir} 
+         MSA                                                : ${params.msa}        
+         Sequences                                          : ${params.seqs}
+         References aux                                     : ${params.ref_aux}
+         References ss                                      : ${params.ref_ss}
          Guide tree to retrieve informative sequences       : ${params.regtrim_tree}
          N seq --> QuanTest2                                : ${params.n_quantest2}
-         Output directory (DIRECTORY)                       : ${params.output}
          """
          .stripIndent()
 
 
-
-
-
-// organize input files 
-
-msas_l=[]; seqs_l=[]; names_l=[]; trees_l=[]; ss_l=[]
-for ( fam in params.fams ) 
-{
-  for ( bucket in params.bucket ) 
-  {
-    for ( aligner in params.aligner.keySet().collect() ) 
-    {
-        f=params.aligner[aligner]
-        for ( tree in params.tree ) 
-        {
-          msa=params.msa_dir+"/results_fullTree_"+f+"_bucket"+bucket+"/alignments/"+fam+".dpa_"+bucket+"."+aligner+".with."+tree+".tree.aln"
-          s=params.seq_dir + "/" + fam + ".fa"
-          n=params.ref_dir + "/" + fam + ".aux"
-          t=params.tree_dir + "/" + fam + "." + params.regtrim_tree + ".dnd"
-          ss=params.ss_dir + "/" + fam + ".ss"
-          File file = new File(msa)
-          if (file.exists()){
-            msas_l.add(msa); seqs_l.add(s); names_l.add(n); trees_l.add(t); ss_l.add(ss)
-          }
-        }
-    }
-  }
-}
-
+// ---------------------------------
+// Orgaize input files into Channels
+// ---------------------------------
 
 Channel
-  .fromPath(msas_l)
-  .map { item -> [ item.baseName ]}
-  .set { ids }
+  .fromPath( params.msa )
+  .map { item -> [ item.baseName.tokenize('.')[0], item.baseName.tokenize('.')[5], 
+                   item.baseName.tokenize('.')[2], item.baseName.tokenize('.')[3], 
+                   item.baseName, item] }   // [ fam, tree_method, bucket, aligner, id, msa]
+  .set { ch_msa }
 
 Channel
-  .fromPath(seqs_l)
-  .map { item -> [ item.baseName ]}
-  .set { fams }
+  .fromPath( params.seqs )
+  .map { item -> [ item.baseName, item] }  
+  .set { ch_seqs }
 
 Channel
-  .fromPath(msas_l)
-  .map { item -> [ item ]}
-  .set { msas }
+  .fromPath( params.ref_aux )
+  .map { item -> [ item.baseName, item] }
+  .set { ch_refaux }
 
 Channel
-  .fromPath(seqs_l)
-  .map { item -> [ item ]}
-  .set { seqs }
+  .fromPath( params.ref_ss )
+  .map { item -> [ item.baseName, item] }
+  .set { ch_refss }
 
 Channel
-  .fromPath(names_l)
-  .map { item -> [ item ]}
-  .set { refnames }
+  .fromPath( params.regtrim_tree )
+  .map { item -> [ item.baseName.tokenize('.')[0], item.baseName.tokenize('.')[1], item] }   //  [fam, regtrimtree_method, regtrimtree]
+  .set { ch_regtrimtree }
 
-Channel
-  .fromPath(trees_l)
-  .map { item -> [ item ]}
-  .set { trees }
-
-Channel
-  .fromPath(ss_l)
-  .map { item -> [ item ]}
-  .set { ss }
-
-ids
-  .merge( fams, msas, seqs, refnames, trees, ss )
-  .set { toQuantest2 }   // Channel [ id, fam, msa, seq, refname, tree, ss ]
+ch_msa
+  .combine( ch_seqs, by:0 )
+  .combine( ch_refaux, by:0 )
+  .combine( ch_refss, by:0 )
+  .combine( ch_regtrimtree, by:0 )
+  .set { toQuanTest2 }
+//   .println()
 
 
+// -------------
+// Run QuanTest2
+// -------------
 
+process quantest2 {
 
-process nf_quantest2 {
+    // cache false 
 
-    cache false 
-
-    tag "${id}.informative${n_quantest2}.with.${regtrim_tree}.tree"
-    publishDir "${params.output}/n${n_quantest2}/${fam}", mode: 'copy', overwrite: true
+    tag "${id}.informative${n_quantest2}.with.${regtrim_treemethod}.tree*"
+    publishDir "${params.maindir}/results_${bucket_size}_${aligner_method}/quantest2", mode: 'copy', overwrite: true
 
     input:
-      set val(id), \
-          val(fam), \
+      set val(fam), \
+          val(tree_method), \
+          val(bucket_size), \
+          val(aligner_method), \
+          val(id), \
           file(msa), \
           file(seqs), \
-          file(refnames), \
-          file(tree), \
-          file(ss) \
-          from toQuantest2        
-      val(regtrim_tree) from params.regtrim_tree
-      each n_quantest2 from params.n_quantest2
+          file(refaux), \
+          file(refss), \
+          val(regtrim_treemethod), \
+          file(regtrim_tree) \
+          from toQuanTest2        
+      each n_quantest2 from params.n_quantest2.tokenize(',')
           
     output:
       set val(id), \
           val(fam), \
+          val(tree_method), \
+          val(bucket_size), \
+          val(aligner_method), \
+          val(regtrim_treemethod), \
           val(n_quantest2), \
-          val(regtrim_tree), \
-          file("${id}.informative${n_quantest2}.with.${regtrim_tree}.tree*") \
+          file("${id}.informative${n_quantest2}.with.${regtrim_treemethod}.tree.quantest2*") \
           into predictions
 
-    when:
-      if(new File("${params.output}/n${n_quantest2}/${fam}/${id}.informative${n_quantest2}.with.${regtrim_tree}.tree.quantest2").exists()){false}else{true}
+    // when:
+    //   if(new File("${params.output}/n${n_quantest2}/${fam}/${id}.informative${n_quantest2}.with.${regtrim_tree}.tree.quantest2").exists()){false}else{true}
 
     script:
       """
       python3 $baseDir/bin/get_refANDinformative_seqs.py \
-      --msa ${msa} --seq ${seqs} --names ${refnames} --tree ${tree} --n ${n_quantest2} \
-      >> ${id}.informative${n_quantest2}.with.${regtrim_tree}.tree.aln
+      --msa ${msa} --seq ${seqs} --names ${refaux} --tree ${regtrim_tree} --n ${n_quantest2} \
+      >> ${id}.informative${n_quantest2}.with.${regtrim_treemethod}.tree.aln
 
 
 
 
-      quantest2 ${id}.informative${n_quantest2}.with.${regtrim_tree}.tree.aln ${ss} 
+      quantest2 ${id}.informative${n_quantest2}.with.${regtrim_treemethod}.tree.aln ${refss} 
 
-      awk 'NR==4{print}' ${id}.informative${n_quantest2}.with.${regtrim_tree}.tree.quantest2_log | cut -f2 \
-      > ${id}.informative${n_quantest2}.with.${regtrim_tree}.tree.quantest2
+      awk 'NR==4{print}' ${id}.informative${n_quantest2}.with.${regtrim_treemethod}.tree.quantest2_log | cut -f2 \
+      > ${id}.informative${n_quantest2}.with.${regtrim_treemethod}.tree.quantest2
       
       """
 
